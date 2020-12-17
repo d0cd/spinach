@@ -1,7 +1,9 @@
 use crate::merge::Merge;
+use serde::{Serialize, Deserialize};
 
 pub type LatticeMap<K, V, F> = std::collections::HashMap<K, Lattice<V, F>>;
 
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Lattice<T, F: Merge<T>> {
     val: T,
     merger: std::marker::PhantomData<F>,

@@ -4,6 +4,8 @@ use std::collections::hash_map::Entry;
 use std::iter::Extend;
 use std::cmp::Ordering;
 
+use serde::{Serialize, Deserialize};
+
 use crate::Lattice;
 use crate::LatticeMap;
 
@@ -19,6 +21,7 @@ pub trait Merge<T> {
 
 // ORD MERGES //
 
+#[derive(Clone, Serialize, Deserialize)]
 pub struct MaxMerge;
 impl <T: Ord> Merge<T> for MaxMerge {
     fn merge(val: &mut T, other: T) {
@@ -32,6 +35,8 @@ impl <T: Ord> Merge<T> for MaxMerge {
     }
 }
 
+
+#[derive(Clone, Serialize, Deserialize)]
 pub struct MinMerge;
 impl <T: Ord> Merge<T> for MinMerge {
     fn merge(val: &mut T, other: T) {
@@ -47,6 +52,7 @@ impl <T: Ord> Merge<T> for MinMerge {
 
 // SET MERGES //
 
+#[derive(Clone, Serialize, Deserialize)]
 pub struct UnionMerge;
 impl <T: Eq + Hash> Merge<HashSet<T>> for UnionMerge {
     fn merge(val: &mut HashSet<T>, other: HashSet<T>) {
@@ -95,6 +101,7 @@ impl <T: Eq + Ord> Merge<BTreeSet<T>> for UnionMerge {
     }
 }
 
+#[derive(Clone, Serialize, Deserialize)]
 pub struct IntersectMerge;
 impl <T: Eq + Hash> Merge<HashSet<T>> for IntersectMerge {
     fn merge(val: &mut HashSet<T>, other: HashSet<T>) {
@@ -147,7 +154,7 @@ impl <T: Eq + Ord> Merge<BTreeSet<T>> for IntersectMerge {
 }
 
 // MAP MERGES //
-
+#[derive(Clone, Serialize, Deserialize)]
 pub struct MapUnionMerge;
 impl <K: Eq + Hash, V, F: Merge<V>> Merge<LatticeMap<K, V, F>> for MapUnionMerge {
     fn merge(val: &mut LatticeMap<K, V, F>, other: LatticeMap<K, V, F>) {
@@ -209,6 +216,7 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<LatticeMap<K, V, F>> for MapUnionMerge
     }
 }
 
+#[derive(Clone, Serialize, Deserialize)]
 pub struct MapIntersectionMerge;
 impl <K: Eq + Hash, V, F: Merge<V>> Merge<LatticeMap<K, V, F>> for MapIntersectionMerge {
     fn merge(val: &mut LatticeMap<K, V, F>, other: LatticeMap<K, V, F>) {
@@ -262,6 +270,7 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<LatticeMap<K, V, F>> for MapIntersecti
     }
 }
 
+#[derive(Clone, Serialize, Deserialize)]
 pub struct LexicographicMerge;
 impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Lattice<A, AF>, Lattice<B, BF>)> for LexicographicMerge {
     fn merge(val: &mut (Lattice<A, AF>, Lattice<B, BF>), other: (Lattice<A, AF>, Lattice<B, BF>)) {
